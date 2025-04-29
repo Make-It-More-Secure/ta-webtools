@@ -25,24 +25,25 @@ def getException(e,uri):
     response['url'] = uri
     return(response)
 
-def get(uri,sessionKey,cert,token=None,headers=None,payload=None,user=None,password=None,timeout=60):
+def get(uri, sessionKey, cert, token=None, headers=None, payload=None, user=None, password=None, timeout=60):
     try:
-        if sessionKey == None and token == None:
-            if user == None and password == None:
-                r = requests.get(uri,params=payload,verify=True,cert=cert,headers=headers,timeout=timeout)
+        if sessionKey is None and token is None:
+            if user is None and password is None:
+                r = requests.get(uri, params=payload, verify=False, cert=cert, headers=headers, timeout=timeout)
             else:
-                r = requests.get(uri,auth=(user,password),params=payload,verify=True,cert=cert,headers=headers,timeout=timeout)
-        elif token != None:
-            headers = {}
+                r = requests.get(uri, auth=(user, password), params=payload, verify=False, cert=cert, headers=headers, timeout=timeout)
+        elif token is not None:
+            headers = headers or {}
             headers["Authorization"] = "Bearer %s" % token
-            r = requests.get(uri,params=payload,verify=True,cert=cert,headers=headers,timeout=timeout)
+            r = requests.get(uri, params=payload, verify=False, cert=cert, headers=headers, timeout=timeout)
         else:
-            headers = {}
+            headers = headers or {}
             headers["Authorization"] = "Splunk %s" % sessionKey
-            r = requests.get(uri,params=payload,verify=True,cert=cert,headers=headers,timeout=timeout)
-        return(getResponse(r,uri))
+            r = requests.get(uri, params=payload, verify=False, cert=cert, headers=headers, timeout=timeout)
+        return getResponse(r, uri)
     except requests.exceptions.RequestException as e:
-        return(getException(e,uri))
+        return getException(e, uri)
+
 
 def head(uri,sessionKey,cert,token=None,headers=None,payload=None,user=None,password=None,timeout=60):
     try:
